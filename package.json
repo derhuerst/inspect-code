@@ -9,5 +9,10 @@
 	"homepage":     "https://github.com/derhuerst/inspect-code",
 	"repository":   "derhuerst/inspect-code",
 	"license":      "ISC",
-	"engines":      {"node": ">=6"}
+	"engines":      {"node": ">=6"},
+	"dependencies": {
+		"esprima": "^2.7.2",
+		"lodash.uniq": "^4.5",
+		"estools": "^2.2"
+	}
 }
