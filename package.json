@@ -1,0 +1,13 @@
+{
+	"name":         "inspect-code",
+	"description":  "Run code and get the value of every expressions.",
+	"version":      "0.1.0",
+	"main":         "index.js",
+	"files":        ["index.js"],
+	"keywords":     ["debug", "debugger", "inspector"],
+	"author":       "Jannis R <mail@jannisr.de>",
+	"homepage":     "https://github.com/derhuerst/inspect-code",
+	"repository":   "derhuerst/inspect-code",
+	"license":      "ISC",
+	"engines":      {"node": ">=6"}
+}
