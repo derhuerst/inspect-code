@@ -18,7 +18,45 @@ npm install inspect-code
 
 ## Usage
 
-todo
+Imagine you want to analyze the following piece of code.
+
+```js
+const code = `
+	'use strict'
+	const a = x => x - 1
+	const b = [1, 2, 3]
+	const c = b[a(b.length)]
+	c + 1`
+```
+
+`inspect` will return a list of expressions.
+
+```js
+const inspect = require('./index')
+const expressions = inspect(code)
+
+for (let exp of expressions) {
+	console.log(code.substring(exp.from, exp.to + 1).trim())
+	for (let value of exp.values) console.log('\t', value)
+}
+```
+
+```
+x - 1
+	2
+x => x - 1
+	x => _((x - 1),0)
+[1, 2, 3]
+	[ 1, 2, 3 ]
+b.length)
+	3
+a(b.length)]
+	2
+b[a(b.length)]
+	3
+c + 1
+	4
+```
 
 
 ## Contributing
