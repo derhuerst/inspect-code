@@ -1,8 +1,7 @@
 'use strict'
 
-const esprima = require('esprima')
-const uniq = require('lodash.uniq')
-const filter = require('estools/filter')
+const astw = require('astw')
+const falafel = require('falafel')
 const vm = require('vm')
 
 
@@ -16,35 +15,41 @@ const identifier = (blacklist) => {
 	}
 }
 
+const identifiers = (code) => {
+	const ids = []
+	astw(code)((node) => {
+		if (node.type === 'Identifier' && ids.indexOf(node.name) === -1)
+			ids.push(node.name)
+	})
+	return ids
+}
 
 
-const inspect = (code, sandbox = {}) => {
-	const parsed = esprima.parse(code, {range: true})
-		.body.map((e) =>
-			[e.range[0], e.range[1], code.substring(e.range[0], e.range[1] + 1)])
 
-	const identifiers = uniq(
-		filter(parsed, {type: 'Identifier'})
-		.map((node) => node.name))
-	const id = identifier(identifiers)
+const inspect = (code) => {
+	const data = []
+	const hookFn = (x) => {data.push(x); return x}
+	const hookName = identifier(identifiers(code))
 
-	const tapped = parsed
-		.map((exp) => id + '(' + exp[2] + ')')
-		.join(';')
+	const tapped = falafel(code, {ecmaVersion: 6}, (n) => {
+		if (n.type === 'VariableDeclarator') {
+			if (n.init.type === 'SequenceExpression')
+				n.init.update(hookName + '((' + n.init.source() + '))')
+			else n.init.update(hookName + '(' + n.init.source() + ')')
+		} else if (n.type === 'AssignmentExpression') {
+			n.update(hookName + '(' + n.source() + ')')
+		} else if (n.type === 'ExpressionStatement') {
+			n.update(hookName + '(' + n.source() + ')')
+		}
+	})
 
-	let i = 0
-	const hook = (result) => {
-		parsed[i].push(result)
-		i++
-	}
-
-	sandbox = Object.assign({}, sandbox, {[id]: hook})
-	const ctx = new vm.createContext(sandbox)
-
+	const ctx = new vm.createContext({[hookName]: hookFn})
 	const script = new vm.Script(tapped)
-	script.runInContext(ctx)
+	try {
+		script.runInContext(ctx)
+	} catch (err) {return err}
 
-	return parsed
+	return data
 }
 
 module.exports = inspect
