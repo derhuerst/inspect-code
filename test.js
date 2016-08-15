@@ -36,16 +36,13 @@ test('returns an array', (t) => {
 })
 
 test('returns the position of each expression', (t) => {
-	t.plan(9)
+	t.plan(6)
 	const d = inspect(code)
 
-	t.deepEqual(d[0], [31, 36, 2])
-	t.equal(d[1][0], 26)
-	t.equal(d[1][1], 36)
-	t.equal(typeof d[1][2], 'function')
-	t.deepEqual(d[2], [48, 57, [1, 2, 3]])
-	t.deepEqual(d[3], [73, 81, 3])
-	t.deepEqual(d[4], [71, 82, 2])
-	t.deepEqual(d[5], [69, 83, 3])
-	t.deepEqual(d[6], [85, 90, 4])
+	t.deepEqual(d[0], {from: 31, to: 36, values: [2]})
+	t.deepEqual(d[2], {from: 48, to: 57, values: [[1, 2, 3]]})
+	t.deepEqual(d[3], {from: 73, to: 81, values: [3]})
+	t.deepEqual(d[4], {from: 71, to: 82, values: [2]})
+	t.deepEqual(d[5], {from: 69, to: 83, values: [3]})
+	t.deepEqual(d[6], {from: 85, to: 90, values: [4]})
 })
