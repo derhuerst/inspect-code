@@ -12,5 +12,13 @@
 	"engines":      {"node": ">=6"},
 	"dependencies": {
 		"falafel": "^1.2"
+	},
+	"devDependencies": {
+		"tape": "^4.6",
+		"tap-min": "^1.1"
+	},
+	"scripts": {
+		"test": "node test.js | tap-min",
+		"prepublish": "npm test"
 	}
 }

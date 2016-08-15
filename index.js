@@ -23,9 +23,7 @@ const inspect = (code) => {
 
 	const ctx = new vm.createContext({_: hook})
 	const script = new vm.Script(tapped)
-	try {
-		script.runInContext(ctx)
-	} catch (err) {return err}
+	script.runInContext(ctx)
 
 	return data
 }
