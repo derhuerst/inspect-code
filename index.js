@@ -7,7 +7,7 @@ const vm = require('vm')
 
 const inspect = (code) => {
 	const data = []
-	const hook = (x, i) => {
+	const spy = (x, i) => {
 		if (data[i]) data[i].values.push(x);
 		return x
 	}
@@ -21,7 +21,7 @@ const inspect = (code) => {
 		}
 	})
 
-	const ctx = new vm.createContext({_: hook})
+	const ctx = new vm.createContext({_: spy})
 	const script = new vm.Script(tapped)
 	script.runInContext(ctx)
 
