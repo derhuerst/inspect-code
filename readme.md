@@ -2,7 +2,7 @@
 
 **Run code and get every statement's value.**
 
-*inspect-code* takes a string of code, taps it to spy on every expression, and runs it inside [Node's vm](https://nodejs.org/api/vm.html) module.
+*inspect-code* takes a string of code, instruments it to spy on every expression, and runs it inside [Node's vm](https://nodejs.org/api/vm.html) module. It returns every expression, with its position and values.
 
 [![npm version](https://img.shields.io/npm/v/inspect-code.svg)](https://www.npmjs.com/package/inspect-code)
 [![build status](https://img.shields.io/travis/derhuerst/inspect-code.svg)](https://travis-ci.org/derhuerst/inspect-code)

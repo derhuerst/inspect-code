@@ -13,7 +13,7 @@ const inspect = (code) => {
 	}
 
 	let i = 0
-	const tapped = falafel(code, {ecmaVersion: 6, ranges: true}, (n) => {
+	const instrumented = falafel(code, {ecmaVersion: 6, ranges: true}, (n) => {
 		if (/Expression$/.test(n.type)) {
 			data[i] = {from: n.range[0], to: n.range[1], values: []}
 			n.update('_((' + n.source() + '),' + i + ')')
@@ -22,7 +22,7 @@ const inspect = (code) => {
 	})
 
 	const ctx = new vm.createContext({_: spy})
-	const script = new vm.Script(tapped)
+	const script = new vm.Script(instrumented)
 	script.runInContext(ctx)
 
 	return data

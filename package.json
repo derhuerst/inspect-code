@@ -4,7 +4,10 @@
 	"version":      "0.1.0",
 	"main":         "index.js",
 	"files":        ["index.js"],
-	"keywords":     ["debug", "debugger", "inspector"],
+	"keywords":     [
+		"debug", "debugger", "inspector", "instrument", "codecov",
+		"expression", "values", "dynamic analysis"
+	],
 	"author":       "Jannis R <mail@jannisr.de>",
 	"homepage":     "https://github.com/derhuerst/inspect-code",
 	"repository":   "derhuerst/inspect-code",
