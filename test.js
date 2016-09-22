@@ -34,27 +34,16 @@ test('returns an array', (t) => {
 	t.ok(Array.isArray(inspect(code)))
 })
 
-test('returns the range of each expression', (t) => {
-	t.plan(6 * 2)
+test('returns each expression', (t) => {
+	t.plan(6)
 	const d = inspect(code)
 
-	t.deepEqual(d[0].from, 15)
-	t.deepEqual(d[0].to,   20)
-
-	t.deepEqual(d[2].from, 31)
-	t.deepEqual(d[2].to,   40)
-
-	t.deepEqual(d[3].from, 55)
-	t.deepEqual(d[3].to,   63)
-
-	t.deepEqual(d[4].from, 53)
-	t.deepEqual(d[4].to,   64)
-
-	t.deepEqual(d[5].from, 51)
-	t.deepEqual(d[5].to,   65)
-
-	t.deepEqual(d[6].from, 66)
-	t.deepEqual(d[6].to,   71)
+	t.equal(d[0].code.trim(), `x - 1`)
+	t.equal(d[2].code.trim(), `[5, 6, 7]`)
+	t.equal(d[3].code.trim(), `b.length`)
+	t.equal(d[4].code.trim(), `a(b.length)`)
+	t.equal(d[5].code.trim(), `b[a(b.length)]`)
+	t.equal(d[6].code.trim(), `c + 1`)
 })
 
 test('returns the position of each expression', (t) => {

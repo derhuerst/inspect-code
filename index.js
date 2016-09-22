@@ -46,7 +46,11 @@ const inspect = (code) => {
 		if (/Expression$/.test(n.type)) {
 			const start = {line: n.loc.start.line - 1, column: n.loc.start.column}
 			const end = {line: n.loc.end.line - 1, column: n.loc.end.column}
-			data[i] = {start, end, from: n.range[0], to: n.range[1], values: []}
+			data[i] = {
+				start, end,
+				code: code.substring(n.range[0], n.range[1]),
+				values: []
+			}
 			n.update(nameOfSpy + '((' + n.source() + '),' + i + ')')
 			i++
 		}

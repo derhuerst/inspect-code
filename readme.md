@@ -34,29 +34,48 @@ c + 1`
 
 ```js
 const inspect = require('./index')
-const expressions = inspect(code)
-
-for (let exp of expressions) {
-	console.log(code.substring(exp.from, exp.to + 1).trim())
-	for (let value of exp.values) console.log('\t', value)
-}
+console.log(inspect(code))
 ```
 
 ```
-x - 1
-	2
-x => x - 1
-	x => _((x - 1),0)
-[1, 2, 3]
-	[ 1, 2, 3 ]
-b.length)
-	3
-a(b.length)]
-	2
-b[a(b.length)]
-	3
-c + 1
-	4
+[
+	{
+		start:  { line: 0, column: 15 },
+		end:    { line: 0, column: 20 },
+		code:   'x - 1',
+		values: [ 2 ]
+	}, {
+		start:  { line: 0, column: 10 },
+		end:    { line: 0, column: 20 },
+		code:   'x => x - 1',
+		values: [ x => x - 1 ]
+	}, {
+		start:  { line: 1, column: 10 },
+		end:    { line: 1, column: 19 },
+		code:   '[1, 2, 3]',
+		values: [ [ 1, 2, 3 ] ]
+	}, {
+		start:  { line: 2, column: 14 },
+		end:    { line: 2, column: 22 },
+		code:   'b.length',
+		values: [ 3 ]
+	}, {
+		start:  { line: 2, column: 12 },
+		end:    { line: 2, column: 23 },
+		code:   'a(b.length)',
+		values: [ 2 ]
+	}, {
+		start:  { line: 2, column: 10 },
+		end:    { line: 2, column: 24 },
+		code:   'b[a(b.length)]',
+		values: [ 3 ]
+	}, {
+		start:  { line: 3, column: 0 },
+		end:    { line: 3, column: 5 },
+		code:   'c + 1',
+		values: [ 4 ]
+	}
+]
 ```
 
 
