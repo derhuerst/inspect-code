@@ -11,8 +11,8 @@ const vm = require('vm')
 const findIdentifiers = (ast) => {
 	const identifiers = []
 	walk.simple(ast, {
-		// FunctionDeclaration: (node) => identifiers.push(node.id.name),
-		// VariableDeclarator: (node) => identifiers.push(node.id.name),
+		FunctionDeclaration: (node) => identifiers.push(node.id.name),
+		VariableDeclarator: (node) => identifiers.push(node.id.name),
 		Identifier: (node) => identifiers.push(node.name)
 	})
 	return identifiers
