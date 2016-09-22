@@ -14,7 +14,9 @@
 	"license":      "ISC",
 	"engines":      {"node": ">=6"},
 	"dependencies": {
-		"falafel": "^1.2"
+		"acorn": "^4.0.3",
+		"falafel": "^2",
+		"stack-trace": "^0.0.9"
 	},
 	"devDependencies": {
 		"tape": "^4.6",

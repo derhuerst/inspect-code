@@ -16,17 +16,31 @@ c + 1`
 
 
 test('fails on syntax error', (t) => {
-	t.plan(1)
+	t.plan(4)
+
 	t.throws(() => {
 		inspect(`const const a`)
 	}, /^SyntaxError/, 'invalid error')
+	try { inspect(`const const a`) }
+	catch (err) {
+		t.ok(err.loc)
+		t.equal(err.loc.line, 1)
+		t.equal(err.loc.column, 6)
+	}
 })
 
 test('fails on reference error', (t) => {
-	t.plan(1)
+	t.plan(4)
+
 	t.throws(() => {
-		inspect(`'use strict'\na + 3`)
+		inspect(`'use strict'\na`)
 	}, /^ReferenceError/, 'invalid error')
+	try { inspect(`'use strict'\na`) }
+	catch (err) {
+		t.ok(err.loc)
+		t.equal(err.loc.line, 2)
+		t.equal(err.loc.column, 1)
+	}
 })
 
 test('returns an array', (t) => {

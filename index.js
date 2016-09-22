@@ -4,6 +4,7 @@ const acorn = require('acorn')
 const walk = require('acorn/dist/walk')
 const falafel = require('falafel')
 const vm = require('vm')
+const stack = require('stack-trace')
 
 
 
@@ -58,7 +59,16 @@ const inspect = (code) => {
 
 	const ctx = new vm.createContext({[nameOfSpy]: spy})
 	const script = new vm.Script(instrumented)
-	script.runInContext(ctx)
+	try {
+		script.runInContext(ctx)
+	} catch (err) {
+		if (!err.loc) {
+			const f = stack.parse(err)
+			if (!f || !f[0]) return []
+			err.loc = {line: f[0].lineNumber, column: f[0].columnNumber}
+		}
+		throw err
+	}
 
 	return data
 }
