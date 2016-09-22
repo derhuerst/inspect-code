@@ -7,11 +7,11 @@ const inspect = require('./index')
 
 
 
-const code = `
-	const a = x => x - 1
-	const b = [5, 6, 7]
-	const c = b[a(b.length)]
-	c + 1`
+const code = `\
+const a = x => x - 1
+const b = [5, 6, 7]
+const c = b[a(b.length)]
+c + 1`
 
 
 
@@ -38,46 +38,46 @@ test('returns the range of each expression', (t) => {
 	t.plan(6 * 2)
 	const d = inspect(code)
 
-	t.deepEqual(d[0].from, 17)
-	t.deepEqual(d[0].to,   22)
+	t.deepEqual(d[0].from, 15)
+	t.deepEqual(d[0].to,   20)
 
-	t.deepEqual(d[2].from, 34)
-	t.deepEqual(d[2].to,   43)
+	t.deepEqual(d[2].from, 31)
+	t.deepEqual(d[2].to,   40)
 
-	t.deepEqual(d[3].from, 59)
-	t.deepEqual(d[3].to,   67)
+	t.deepEqual(d[3].from, 55)
+	t.deepEqual(d[3].to,   63)
 
-	t.deepEqual(d[4].from, 57)
-	t.deepEqual(d[4].to,   68)
+	t.deepEqual(d[4].from, 53)
+	t.deepEqual(d[4].to,   64)
 
-	t.deepEqual(d[5].from, 55)
-	t.deepEqual(d[5].to,   69)
+	t.deepEqual(d[5].from, 51)
+	t.deepEqual(d[5].to,   65)
 
-	t.deepEqual(d[6].from, 71)
-	t.deepEqual(d[6].to,   76)
+	t.deepEqual(d[6].from, 66)
+	t.deepEqual(d[6].to,   71)
 })
 
 test('returns the position of each expression', (t) => {
 	t.plan(6 * 2)
 	const d = inspect(code)
 
-	t.deepEqual(d[0].start, {line: 1, column: 16})
-	t.deepEqual(d[0].end,   {line: 1, column: 21})
+	t.deepEqual(d[0].start, {line: 0, column: 15})
+	t.deepEqual(d[0].end,   {line: 0, column: 20})
 
-	t.deepEqual(d[2].start, {line: 2, column: 11})
-	t.deepEqual(d[2].end,   {line: 2, column: 20})
+	t.deepEqual(d[2].start, {line: 1, column: 10})
+	t.deepEqual(d[2].end,   {line: 1, column: 19})
 
-	t.deepEqual(d[3].start, {line: 3, column: 15})
-	t.deepEqual(d[3].end,   {line: 3, column: 23})
+	t.deepEqual(d[3].start, {line: 2, column: 14})
+	t.deepEqual(d[3].end,   {line: 2, column: 22})
 
-	t.deepEqual(d[4].start, {line: 3, column: 13})
-	t.deepEqual(d[4].end,   {line: 3, column: 24})
+	t.deepEqual(d[4].start, {line: 2, column: 12})
+	t.deepEqual(d[4].end,   {line: 2, column: 23})
 
-	t.deepEqual(d[5].start, {line: 3, column: 11})
-	t.deepEqual(d[5].end,   {line: 3, column: 25})
+	t.deepEqual(d[5].start, {line: 2, column: 10})
+	t.deepEqual(d[5].end,   {line: 2, column: 24})
 
-	t.deepEqual(d[6].start, {line: 4, column: 1})
-	t.deepEqual(d[6].end,   {line: 4, column: 6})
+	t.deepEqual(d[6].start, {line: 3, column: 0})
+	t.deepEqual(d[6].end,   {line: 3, column: 5})
 })
 
 test('collects values of each expression', (t) => {

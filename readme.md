@@ -23,12 +23,11 @@ npm install inspect-code
 Imagine you want to analyze the following piece of code.
 
 ```js
-const code = `
-	'use strict'
-	const a = x => x - 1
-	const b = [1, 2, 3]
-	const c = b[a(b.length)]
-	c + 1`
+const code = `\
+const a = x => x - 1
+const b = [1, 2, 3]
+const c = b[a(b.length)]
+c + 1`
 ```
 
 `inspect` will return a list of expressions.
