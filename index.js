@@ -30,7 +30,7 @@ const unusedIdentifier = (ast) => {
 }
 
 const inspect = (code) => {
-	const ast = acorn.parse(code, {ecmaVersion: 6, ranges: true})
+	const ast = acorn.parse(code, {ecmaVersion: 6, ranges: true, locations: true})
 
 	const data = []
 	const spy = (x, i) => {
@@ -44,7 +44,9 @@ const inspect = (code) => {
 	const parser = {parse: (code) => ast}
 	const instrumented = falafel(code, {parser}, (n) => {
 		if (/Expression$/.test(n.type)) {
-			data[i] = {from: n.range[0], to: n.range[1], values: []}
+			const start = {line: n.loc.start.line - 1, column: n.loc.start.column}
+			const end = {line: n.loc.end.line - 1, column: n.loc.end.column}
+			data[i] = {start, end, from: n.range[0], to: n.range[1], values: []}
 			n.update(nameOfSpy + '((' + n.source() + '),' + i + ')')
 			i++
 		}
