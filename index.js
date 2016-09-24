@@ -30,7 +30,13 @@ const unusedIdentifier = (ast) => {
 	return id
 }
 
-const inspect = (code) => {
+const defaultSandbox = {
+	Buffer,
+	clearImmediate, clearInterval, clearTimeout,
+	setImmediate, setInterval, setTimeout
+}
+
+const inspect = (code, sandbox = defaultSandbox) => {
 	const ast = acorn.parse(code, {ecmaVersion: 6, ranges: true, locations: true})
 
 	const data = []
@@ -57,7 +63,11 @@ const inspect = (code) => {
 		}
 	})
 
-	const ctx = new vm.createContext({[nameOfSpy]: spy})
+	sandbox = Object.assign({}, sandbox, {[nameOfSpy]: spy})
+	sandbox.global = sandbox
+	sandbox.GLOBAL = sandbox
+
+	const ctx = new vm.createContext(sandbox)
 	const script = new vm.Script(instrumented)
 	try {
 		script.runInContext(ctx)
