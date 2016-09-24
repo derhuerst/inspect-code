@@ -1,7 +1,7 @@
 'use strict'
 
-const acorn = require('acorn')
 const walk = require('acorn/dist/walk')
+const acorn = require('acorn')
 const falafel = require('falafel')
 const vm = require('vm')
 const stack = require('stack-trace')
@@ -38,50 +38,55 @@ const defaultSandbox = {
 
 const inspect = (code, sandbox = defaultSandbox) => {
 	const ast = acorn.parse(code, {ecmaVersion: 6, ranges: true, locations: true})
-
-	const data = []
-	const spy = (x, i) => {
-		if (data[i]) data[i].values.push(x);
-		return x
-	}
-	// todo: would this be a use case for Symbols?
-	const nameOfSpy = unusedIdentifier(ast)
+	const nameOfSpy = unusedIdentifier(ast) // todo: would this be a use case for Symbols?
+	const expressions = []
 
 	let i = 0
-	// skip parsing since we already did that
-	const parser = {parse: (code) => ast}
-	const instrumented = falafel(code, {parser}, (n) => {
+	const instrumented = falafel(code, {
+		parser: {parse: (code) => ast} // skip parsing since we already did that
+	}, (n) => {
 		if (/Expression$/.test(n.type)) {
 			const start = {line: n.loc.start.line - 1, column: n.loc.start.column}
 			const end = {line: n.loc.end.line - 1, column: n.loc.end.column}
-			data[i] = {
-				start, end,
-				code: code.substring(n.range[0], n.range[1]),
-				values: []
+			expressions[i] = {
+				start, end, code: code.substring(n.range[0], n.range[1])
 			}
 			n.update(nameOfSpy + '((' + n.source() + '),' + i + ')')
 			i++
 		}
 	})
 
+
+
+	const results = []
+
+	const spy = (value, i) => {
+		if (expressions[i]) {
+			const result = Object.create(expressions[i])
+			result.value = value
+			result.isException = false
+			results.push(result);
+		}
+		return value
+	}
+
 	sandbox = Object.assign({}, sandbox, {[nameOfSpy]: spy})
 	sandbox.global = sandbox
 	sandbox.GLOBAL = sandbox
 
-	const ctx = new vm.createContext(sandbox)
-	const script = new vm.Script(instrumented)
 	try {
-		script.runInContext(ctx)
+		const script = new vm.Script(instrumented)
+		script.runInContext(new vm.createContext(sandbox))
 	} catch (err) {
 		if (!err.loc) {
 			const f = stack.parse(err)
 			if (!f || !f[0]) return data
 			err.loc = {line: f[0].lineNumber, column: f[0].columnNumber}
 		}
-		throw err
+		results.push(err)
 	}
 
-	return data
+	return results
 }
 
 module.exports = inspect

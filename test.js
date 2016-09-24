@@ -32,15 +32,11 @@ test('fails on syntax error', (t) => {
 test('fails on reference error', (t) => {
 	t.plan(4)
 
-	t.throws(() => {
-		inspect(`'use strict'\na`)
-	}, /^ReferenceError/, 'invalid error')
-	try { inspect(`'use strict'\na`) }
-	catch (err) {
-		t.ok(err.loc)
-		t.equal(err.loc.line, 2)
-		t.equal(err.loc.column, 1)
-	}
+	const [err] = inspect(`'use strict'\na`)
+	t.equal(err.name, 'ReferenceError', 'invalid error')
+	t.ok(err.loc)
+	t.equal(err.loc.line, 2)
+	t.equal(err.loc.column, 1)
 })
 
 test('returns an array', (t) => {
@@ -48,50 +44,48 @@ test('returns an array', (t) => {
 	t.ok(Array.isArray(inspect(code)))
 })
 
-test('returns each expression', (t) => {
-	t.plan(6)
+test('extracts all expressions correctly', (t) => {
+	t.plan(7 * 3)
 	const d = inspect(code)
 
-	t.equal(d[0].code.trim(), `x - 1`)
-	t.equal(d[2].code.trim(), `[5, 6, 7]`)
-	t.equal(d[3].code.trim(), `b.length`)
-	t.equal(d[4].code.trim(), `a(b.length)`)
-	t.equal(d[5].code.trim(), `b[a(b.length)]`)
-	t.equal(d[6].code.trim(), `c + 1`)
-})
-
-test('returns the position of each expression', (t) => {
-	t.plan(6 * 2)
-	const d = inspect(code)
-
-	t.deepEqual(d[0].start, {line: 0, column: 15})
+	t.equal(d[0].code.trim(), `x => x - 1`)
+	t.deepEqual(d[0].start, {line: 0, column: 10})
 	t.deepEqual(d[0].end,   {line: 0, column: 20})
 
-	t.deepEqual(d[2].start, {line: 1, column: 10})
-	t.deepEqual(d[2].end,   {line: 1, column: 19})
+	t.equal(d[1].code.trim(), `[5, 6, 7]`)
+	t.deepEqual(d[1].start, {line: 1, column: 10})
+	t.deepEqual(d[1].end,   {line: 1, column: 19})
 
-	t.deepEqual(d[3].start, {line: 2, column: 14})
-	t.deepEqual(d[3].end,   {line: 2, column: 22})
+	t.equal(d[2].code.trim(), `b.length`)
+	t.deepEqual(d[2].start, {line: 2, column: 14})
+	t.deepEqual(d[2].end,   {line: 2, column: 22})
 
+	t.equal(d[3].code.trim(), `x - 1`)
+	t.deepEqual(d[3].start, {line: 0, column: 15})
+	t.deepEqual(d[3].end,   {line: 0, column: 20})
+
+	t.equal(d[4].code.trim(), `a(b.length)`)
 	t.deepEqual(d[4].start, {line: 2, column: 12})
 	t.deepEqual(d[4].end,   {line: 2, column: 23})
 
+	t.equal(d[5].code.trim(), `b[a(b.length)]`)
 	t.deepEqual(d[5].start, {line: 2, column: 10})
 	t.deepEqual(d[5].end,   {line: 2, column: 24})
 
+	t.equal(d[6].code.trim(), `c + 1`)
 	t.deepEqual(d[6].start, {line: 3, column: 0})
 	t.deepEqual(d[6].end,   {line: 3, column: 5})
 })
 
-test('collects values of each expression', (t) => {
-	t.plan(6 + 1)
+test('collects all values correctly', (t) => {
+	t.plan(7)
 	const d = inspect(code)
 
-	t.deepEqual(d[0].values, [2])
-	t.equal(typeof d[1].values[0], 'function')
-	t.deepEqual(d[2].values, [[5, 6, 7]])
-	t.deepEqual(d[3].values, [3])
-	t.deepEqual(d[4].values, [2])
-	t.deepEqual(d[5].values, [7])
-	t.deepEqual(d[6].values, [8])
+	t.equal(typeof d[0].value, 'function')
+	t.deepEqual(d[1].value, [5, 6, 7])
+	t.deepEqual(d[2].value, 3)
+	t.deepEqual(d[3].value, 2)
+	t.deepEqual(d[4].value, 2)
+	t.deepEqual(d[5].value, 7)
+	t.deepEqual(d[6].value, 8)
 })
