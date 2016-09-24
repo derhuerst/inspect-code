@@ -1,6 +1,6 @@
 # *inspect-code*
 
-**Run code and get every statement's value.**
+**Run code and get every statement's value.** Powering [`js-playgrounds`](https://github.com/derhuerst/js-playgrounds).
 
 *inspect-code* takes a string of code, instruments it to spy on every expression, and runs it inside [Node's vm](https://nodejs.org/api/vm.html) module. It returns every expression, with its position and values.
 

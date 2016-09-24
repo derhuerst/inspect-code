@@ -44,6 +44,7 @@ const inspect = (code, sandbox = defaultSandbox) => {
 		if (data[i]) data[i].values.push(x);
 		return x
 	}
+	// todo: would this be a use case for Symbols?
 	const nameOfSpy = unusedIdentifier(ast)
 
 	let i = 0
@@ -74,7 +75,7 @@ const inspect = (code, sandbox = defaultSandbox) => {
 	} catch (err) {
 		if (!err.loc) {
 			const f = stack.parse(err)
-			if (!f || !f[0]) return []
+			if (!f || !f[0]) return data
 			err.loc = {line: f[0].lineNumber, column: f[0].columnNumber}
 		}
 		throw err
