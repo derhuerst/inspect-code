@@ -1,5 +1,6 @@
 'use strict'
 
+const findIdentifiers = require('javascript-idents').all
 const walk = require('acorn/dist/walk')
 const acorn = require('acorn')
 const falafel = require('falafel')
@@ -7,17 +8,6 @@ const vm = require('vm')
 const stack = require('stack-trace')
 
 
-
-// todo: put this in a module!
-const findIdentifiers = (ast) => {
-	const identifiers = []
-	walk.simple(ast, {
-		FunctionDeclaration: (node) => identifiers.push(node.id.name),
-		VariableDeclarator: (node) => identifiers.push(node.id.name),
-		Identifier: (node) => identifiers.push(node.name)
-	})
-	return identifiers
-}
 
 const unusedIdentifier = (ast) => {
 	const identifiers = findIdentifiers(ast)

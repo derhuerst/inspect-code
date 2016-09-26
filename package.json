@@ -14,6 +14,7 @@
 	"license":      "ISC",
 	"engines":      {"node": ">=6"},
 	"dependencies": {
+		"javascript-idents": "sourcegraph/javascript-idents",
 		"acorn": "^4.0.3",
 		"falafel": "^2",
 		"stack-trace": "^0.0.9"
