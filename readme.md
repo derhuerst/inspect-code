@@ -1,6 +1,6 @@
 # *inspect-code*
 
-**Run code and get every statement's value.** Powering [`js-playgrounds`](https://github.com/derhuerst/js-playgrounds).
+**Run code and get every expression's value.** Powering [`js-playgrounds`](https://github.com/derhuerst/js-playgrounds).
 
 *inspect-code* takes a string of code, instruments it to spy on every expression, and runs it inside [Node's vm](https://nodejs.org/api/vm.html) module. It returns every expression, with its position and values.
 
@@ -30,11 +30,15 @@ const c = b[a(b.length)]
 c + 1`
 ```
 
-`inspect` will return a list of expressions.
+`inspect` will return a list of results, each with `start`, `end`, `code`, `value` and `isException`.
 
 ```js
 const inspect = require('./index')
-console.log(inspect(code))
+
+for (let result of inspect(code)) {
+	console.log(result.code)
+	console.log('\t', result.value)
+}
 ```
 
 ```
