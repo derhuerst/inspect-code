@@ -51,11 +51,6 @@ for (let result of inspect(code)) {
 		code:   'x - 1',
 		values: [ 2 ]
 	}, {
-		start:  { line: 0, column: 10 },
-		end:    { line: 0, column: 20 },
-		code:   'x => x - 1',
-		values: [ x => x - 1 ]
-	}, {
 		start:  { line: 1, column: 10 },
 		end:    { line: 1, column: 19 },
 		code:   '[1, 2, 3]',

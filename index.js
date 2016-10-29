@@ -1,7 +1,6 @@
 'use strict'
 
 const findIdentifiers = require('javascript-idents').all
-const walk = require('acorn/dist/walk')
 const acorn = require('acorn')
 const falafel = require('falafel')
 const vm = require('vm')
@@ -11,9 +10,8 @@ const defaultSandbox = require('./default-sandbox')
 
 
 
-const unusedIdentifier = (ast) => {
-	const identifiers = findIdentifiers(ast)
-	let id = '_'
+const unusedIdentifier = (identifiers) => {
+	let id = identifiers[0] || '_'
 	while (identifiers.includes(id)) {
 		id = ''
 		for (let i = 0; i < 5; i++)
@@ -66,7 +64,7 @@ const inspect = (code, sandbox = defaultSandbox) => {
 	sandbox.GLOBAL = sandbox
 
 	try {
-		const script = new vm.Script(instrumented)
+		const script = new vm.Script(instrumented, {filename: 'inspect-code'})
 		script.runInContext(new vm.createContext(sandbox))
 	} catch (err) {
 		if (!err.loc) {
