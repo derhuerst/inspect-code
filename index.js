@@ -22,6 +22,10 @@ const unusedIdentifier = (ast) => {
 	return id
 }
 
+const isPrimitiveExpression = (node) =>
+	/Expression$/.test(node.type)
+	&& !(/FunctionExpression$/.test(node.type))
+
 const inspect = (code, sandbox = defaultSandbox) => {
 	const ast = acorn.parse(code, {ecmaVersion: 6, ranges: true, locations: true})
 	const nameOfSpy = unusedIdentifier(ast) // todo: would this be a use case for Symbols?
@@ -31,7 +35,7 @@ const inspect = (code, sandbox = defaultSandbox) => {
 	const instrumented = falafel(code, {
 		parser: {parse: (code) => ast} // skip parsing since we already did that
 	}, (n) => {
-		if (/Expression$/.test(n.type)) {
+		if (isPrimitiveExpression(n)) {
 			const start = {line: n.loc.start.line - 1, column: n.loc.start.column}
 			const end = {line: n.loc.end.line - 1, column: n.loc.end.column}
 			expressions[i] = {
