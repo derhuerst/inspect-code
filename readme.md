@@ -4,6 +4,8 @@
 
 *inspect-code* takes a string of code, instruments it to spy on every expression, and runs it inside [Node's vm](https://nodejs.org/api/vm.html) module. It returns every expression, with its position and values.
 
+The code will behave normal, except that it has only access to [things inside the sandbox](default-sandbox.js). Also, code that does any stack trace magic will behave differently.
+
 [![npm version](https://img.shields.io/npm/v/inspect-code.svg)](https://www.npmjs.com/package/inspect-code)
 [![build status](https://img.shields.io/travis/derhuerst/inspect-code.svg)](https://travis-ci.org/derhuerst/inspect-code)
 [![dependency status](https://img.shields.io/david/derhuerst/inspect-code.svg)](https://david-dm.org/derhuerst/inspect-code)

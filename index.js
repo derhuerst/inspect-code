@@ -7,6 +7,8 @@ const falafel = require('falafel')
 const vm = require('vm')
 const stack = require('stack-trace')
 
+const defaultSandbox = require('./default-sandbox')
+
 
 
 const unusedIdentifier = (ast) => {
@@ -18,12 +20,6 @@ const unusedIdentifier = (ast) => {
 			id += (Math.random() * 26 + 10 | 0).toString(36)
 	}
 	return id
-}
-
-const defaultSandbox = {
-	Buffer,
-	clearImmediate, clearInterval, clearTimeout,
-	setImmediate, setInterval, setTimeout
 }
 
 const inspect = (code, sandbox = defaultSandbox) => {

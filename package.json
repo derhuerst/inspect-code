@@ -3,7 +3,7 @@
 	"description":  "Run code and get the value of every expression.",
 	"version":      "0.1.0",
 	"main":         "index.js",
-	"files":        ["index.js"],
+	"files":        ["index.js", "default-sandbox.js"],
 	"keywords":     [
 		"debug", "debugger", "inspector", "instrument", "codecov",
 		"expression", "values", "dynamic analysis"
