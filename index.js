@@ -6,26 +6,10 @@ const falafel = require('falafel')
 const vm = require('vm')
 const stack = require('stack-trace')
 
+const {
+	unusedIdentifier, isNamedCallExpression, isPrimitiveExpression
+} = require('./helpers')
 const defaultSandbox = require('./default-sandbox')
-
-
-
-const unusedIdentifier = (identifiers) => {
-	let id = identifiers[0] || '_'
-	while (identifiers.includes(id)) {
-		id = ''
-		for (let i = 0; i < 5; i++)
-			id += (Math.random() * 26 + 10 | 0).toString(36)
-	}
-	return id
-}
-
-const isCallExpression = (node) =>
-	/CallExpression$/.test(node.type)
-
-const isPrimitiveExpression = (node) =>
-	/Expression$/.test(node.type)
-	&& !(/FunctionExpression$/.test(node.type))
 
 
 
@@ -35,15 +19,18 @@ const inspect = (code, sandbox = defaultSandbox) => {
 
 	// todo: would this be a use case for Symbols?
 	const nameOfSpy = unusedIdentifier(identifiers)
-	const expressions = []
 	const nameOfDefer = unusedIdentifier(identifiers)
 
+
+
 	let i = 0
+	const expressions = []
+
 	const instrumented = falafel(code, {
 		parser: {parse: (code) => ast} // skip parsing since we already did that
 	}, (n) => {
 
-		if (isCallExpression(n)) {
+		if (isNamedCallExpression(n)) {
 			const fn = n.callee.source()
 			const args = n.arguments
 				.map((arg) => arg.source())
@@ -65,7 +52,6 @@ const inspect = (code, sandbox = defaultSandbox) => {
 
 
 	const results = []
-
 	const spy = (value, i) => {
 		if (expressions[i]) {
 			const result = Object.create(expressions[i])
