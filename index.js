@@ -20,19 +20,37 @@ const unusedIdentifier = (identifiers) => {
 	return id
 }
 
+const isCallExpression = (node) =>
+	/CallExpression$/.test(node.type)
+
 const isPrimitiveExpression = (node) =>
 	/Expression$/.test(node.type)
 	&& !(/FunctionExpression$/.test(node.type))
 
+
+
 const inspect = (code, sandbox = defaultSandbox) => {
 	const ast = acorn.parse(code, {ecmaVersion: 6, ranges: true, locations: true})
-	const nameOfSpy = unusedIdentifier(ast) // todo: would this be a use case for Symbols?
+	const identifiers = findIdentifiers(ast)
+
+	// todo: would this be a use case for Symbols?
+	const nameOfSpy = unusedIdentifier(identifiers)
 	const expressions = []
+	const nameOfDefer = unusedIdentifier(identifiers)
 
 	let i = 0
 	const instrumented = falafel(code, {
 		parser: {parse: (code) => ast} // skip parsing since we already did that
 	}, (n) => {
+
+		if (isCallExpression(n)) {
+			const fn = n.callee.source()
+			const args = n.arguments
+				.map((arg) => arg.source())
+				.join(',')
+			n.update(`${nameOfDefer}(${fn},${args})`)
+		}
+
 		if (isPrimitiveExpression(n)) {
 			const start = {line: n.loc.start.line - 1, column: n.loc.start.column}
 			const end = {line: n.loc.end.line - 1, column: n.loc.end.column}
@@ -59,9 +77,12 @@ const inspect = (code, sandbox = defaultSandbox) => {
 		return value
 	}
 
-	sandbox = Object.assign({}, sandbox, {[nameOfSpy]: spy})
-	sandbox.global = sandbox
-	sandbox.GLOBAL = sandbox
+	const defer = (fn, ...args) => fn(...args)
+
+	sandbox = Object.assign({}, sandbox, {
+		[nameOfSpy]: spy, [nameOfDefer]: defer,
+		global: sandbox, GLOBAL: sandbox
+	})
 
 	try {
 		const script = new vm.Script(instrumented, {filename: 'inspect-code'})
