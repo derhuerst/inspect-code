@@ -55,6 +55,7 @@ const inspect = (code, sandbox = defaultSandbox) => {
 			const result = Object.create(expressions[i])
 			result.value = value
 			result.isException = false
+			result.when = Date.now()
 			results.push(result);
 		}
 		return value

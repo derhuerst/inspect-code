@@ -2,6 +2,7 @@
 'use strict'
 
 const test = require('tape')
+const rEqual = require('is-roughly-equal')
 
 const inspect = require('./index')
 
@@ -83,4 +84,16 @@ test('collects all values correctly', (t) => {
 	t.deepEqual(d[3].value, 2)
 	t.deepEqual(d[4].value, 7)
 	t.deepEqual(d[5].value, 8)
+})
+
+test('collects timestamps', (t) => {
+	t.plan(6 + 6 - 1)
+	const now = Date.now()
+	const d = inspect(code)
+
+	d.forEach((v, i) => {
+		t.ok(rEqual(100, v.when, now))
+		if (d[i - 1])
+			t.ok(rEqual(100, v.when, d[i - 1].when))
+	})
 })
