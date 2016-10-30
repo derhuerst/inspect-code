@@ -16,12 +16,14 @@
 	"dependencies": {
 		"javascript-idents": "^1.0.0",
 		"acorn": "^4.0.3",
-		"falafel": "^2",
+		"escodegen": "^1.8.1",
+		"estraverse": "^4.2",
 		"stack-trace": "^0.0.9"
 	},
 	"devDependencies": {
 		"tape": "^4.6",
-		"tap-min": "^1.1"
+		"tap-min": "^1.1",
+		"is-roughly-equal": "^0.1"
 	},
 	"scripts": {
 		"test": "node test.js | tap-min",
