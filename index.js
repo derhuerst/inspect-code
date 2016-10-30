@@ -55,13 +55,8 @@ const inspect = (code, sandbox = defaultSandbox) => {
 	ast = walk(ast, {
 		enter: (n) => {},
 		leave: (n) => {
-
-			// if (tools.isPrimitiveExpression(n)) {
-			// 	const start = {line: n.loc.start.line - 1, column: n.loc.start.column}
-			// 	const end = {line: n.loc.end.line - 1, column: n.loc.end.column}
-			// 	expressions[i++] = {start, end, code: source(n)}
-			// 	n = tools.call(tools.identifier(nameOfSpy), [n, tools.literal(i)])
-			// }
+			const start = {line: n.loc.start.line - 1, column: n.loc.start.column}
+			const end = {line: n.loc.end.line - 1, column: n.loc.end.column}
 
 			if (tools.isNamedCallExpression(n)) {
 				const fnName = newName()
@@ -73,23 +68,42 @@ const inspect = (code, sandbox = defaultSandbox) => {
 				const args = n.arguments.map((arg, i) =>
 					tools.assignment(tools.identifier(argNames[i]), arg))
 
-				const now = tools.call(tools.identifier(nameOfNow),
-					[fnName].concat(argNames).map(tools.identifier))
+				expressions[i] = {start, end, code: source(n)}
+				const now = tools.call(tools.identifier(nameOfNow), [
+						tools.identifier(fnName),
+						tools.literal(i),
+						argNames.map(tools.identifier)
+				])
 				deferredCalls.push({fn: fnName, args: argNames})
+				i++
 
-				n = {type: 'BlockStatement', body: [fn, ...args, now]}
+				n = {type: 'SequenceExpression', expressions: [fn, ...args, now]}
 			}
 
-			if (n.type === 'Program') {
-				const deferred = tools.call(tools.identifier(nameOfLater), [
-					tools.array(deferredCalls.map((call) => tools.object({
-						fn: tools.identifier(call.fn),
-						args: tools.array(call.args.map(tools.identifier))
-					})))
-				])
-				n = Object.assign({}, n, {
-					body: [].concat(tools.declaration(anchorsToAdd), n.body, deferred)
-				})
+			else if (tools.isPrimitiveExpression(n)) {
+				expressions[i] = {start, end, code: source(n)}
+				n = tools.call(tools.identifier(nameOfSpy), [n, tools.literal(i)])
+				i++
+			}
+
+			else if (n.type === 'Program') {
+				let body = n.body
+
+				if (deferredCalls.length > 0)
+					body = body.concat({
+						type: 'ExpressionStatement',
+						expression: tools.call(tools.identifier(nameOfLater), [
+							tools.array(deferredCalls.map((call) => tools.object({
+								fn: tools.identifier(call.fn),
+								args: tools.array(call.args.map(tools.identifier))
+							})))
+						])
+					})
+
+				if (anchorsToAdd.length > 0)
+					body = [].concat(tools.declaration(anchorsToAdd), body)
+
+				n = Object.assign({}, n, {body})
 			}
 
 			return n
@@ -112,9 +126,9 @@ const inspect = (code, sandbox = defaultSandbox) => {
 		return value
 	}
 
-	const now = (fn, ...args) => {
+	const now = (fn, i, ...args) => {
 		if (fn === setTimeout) return
-		return fn(...args)
+		return spy(fn(...args), i)
 	}
 
 	const later = (calls) => {
