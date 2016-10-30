@@ -1,8 +1,9 @@
 'use strict'
 
-const findIdentifiers = require('javascript-idents').all
+const identifiers = require('javascript-idents').all
 const acorn = require('acorn')
-const falafel = require('falafel')
+const walk = require('estraverse').replace
+const escodegen = require('escodegen')
 const vm = require('vm')
 const stack = require('stack-trace')
 
@@ -32,40 +33,70 @@ const nameFinder = (identifiers) => {
 
 
 const inspect = (code, sandbox = defaultSandbox) => {
-	const ast = acorn.parse(code, {ecmaVersion: 6, ranges: true, locations: true})
-	const identifiers = findIdentifiers(ast)
+	let ast = acorn.parse(code, {ecmaVersion: 6, ranges: true, locations: true})
+
+	const newName = nameFinder(identifiers(ast))
+	const source = (node) => code.slice(node.range[0], node.range[1])
+
+	const anchorsToAdd = []
+	const addAnchor = (name) => anchorsToAdd.push(tools.identifier(name))
+	const deferredCalls = []
 
 	// todo: would this be a use case for Symbols?
-	const nameOfSpy = unusedIdentifier(identifiers)
-	const nameOfDefer = unusedIdentifier(identifiers)
+	const nameOfSpy = newName()
+	const nameOfNow = newName()
+	const nameOfLater = newName()
 
 
 
 	let i = 0
 	const expressions = []
 
-	const instrumented = falafel(code, {
-		parser: {parse: (code) => ast} // skip parsing since we already did that
-	}, (n) => {
+	ast = walk(ast, {
+		enter: (n) => {},
+		leave: (n) => {
 
-		if (isNamedCallExpression(n)) {
-			const fn = n.callee.source()
-			const args = n.arguments
-				.map((arg) => arg.source())
-				.join(',')
-			n.update(`${nameOfDefer}(${fn},${args})`)
-		}
+			// if (tools.isPrimitiveExpression(n)) {
+			// 	const start = {line: n.loc.start.line - 1, column: n.loc.start.column}
+			// 	const end = {line: n.loc.end.line - 1, column: n.loc.end.column}
+			// 	expressions[i++] = {start, end, code: source(n)}
+			// 	n = tools.call(tools.identifier(nameOfSpy), [n, tools.literal(i)])
+			// }
 
-		if (isPrimitiveExpression(n)) {
-			const start = {line: n.loc.start.line - 1, column: n.loc.start.column}
-			const end = {line: n.loc.end.line - 1, column: n.loc.end.column}
-			expressions[i] = {
-				start, end, code: code.substring(n.range[0], n.range[1])
+			if (tools.isNamedCallExpression(n)) {
+				const fnName = newName()
+				addAnchor(fnName)
+				const fn = tools.assignment(tools.identifier(fnName), n.callee)
+
+				const argNames = n.arguments.map(newName)
+				argNames.forEach(addAnchor)
+				const args = n.arguments.map((arg, i) =>
+					tools.assignment(tools.identifier(argNames[i]), arg))
+
+				const now = tools.call(tools.identifier(nameOfNow),
+					[fnName].concat(argNames).map(tools.identifier))
+				deferredCalls.push({fn: fnName, args: argNames})
+
+				n = {type: 'BlockStatement', body: [fn, ...args, now]}
 			}
-			n.update(nameOfSpy + '((' + n.source() + '),' + i + ')')
-			i++
+
+			if (n.type === 'Program') {
+				const deferred = tools.call(tools.identifier(nameOfLater), [
+					tools.array(deferredCalls.map((call) => tools.object({
+						fn: tools.identifier(call.fn),
+						args: tools.array(call.args.map(tools.identifier))
+					})))
+				])
+				n = Object.assign({}, n, {
+					body: [].concat(tools.declaration(anchorsToAdd), n.body, deferred)
+				})
+			}
+
+			return n
 		}
 	})
+
+	const instrumented = escodegen.generate(ast)
 
 
 
@@ -81,10 +112,20 @@ const inspect = (code, sandbox = defaultSandbox) => {
 		return value
 	}
 
-	const defer = (fn, ...args) => fn(...args)
+	const now = (fn, ...args) => {
+		if (fn === setTimeout) return
+		return fn(...args)
+	}
+
+	const later = (calls) => {
+		calls
+		.filter((call) => call.fn === setTimeout)
+		.sort((call1, call2) => call1.args[1] - call2.args[1]) // sort by delay
+		.forEach(({args}) => args[0]()) // call callback synchronously
+	}
 
 	sandbox = Object.assign({}, sandbox, {
-		[nameOfSpy]: spy, [nameOfDefer]: defer,
+		[nameOfSpy]: spy, [nameOfNow]: now, [nameOfLater]: later,
 		global: sandbox, GLOBAL: sandbox
 	})
 
