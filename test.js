@@ -3,21 +3,10 @@
 
 const test = require('tape')
 const rEqual = require('is-roughly-equal')
-const acorn = require('acorn')
-const falafel = require('falafel')
 
-const {enclosingFunctionBlock} = require('./helpers')
 const inspect = require('./index')
 
 
-
-const parse = (code) =>
-	acorn.parse(code, {ecmaVersion: 6})
-
-const walk = (code, selector, fn) =>
-	falafel(code, {parser: {parse}}, (node) => {
-		if (selector(node)) fn(node)
-	})
 
 const code = `\
 const a = x => x - 1
@@ -26,21 +15,6 @@ const c = b[a(b.length)]
 c + 1`
 
 
-
-test('enclosingFunctionBlock', (t) => {
-	t.plan(3)
-	const code = 'const x = 3;\n() => { x + 1 }'
-	const isTarget = (n) =>
-		/Statement$/.test(n.type) && n.source().trim() === 'x + 1'
-
-	walk(code, isTarget, (n) => {
-		const block = enclosingFunctionBlock(n)
-		const fn = block.parent
-		t.strictEqual(block.type, 'BlockStatement')
-		t.strictEqual(block.source().trim(), '{ x + 1 }')
-		t.strictEqual(fn.type, 'ArrowFunctionExpression')
-	})
-})
 
 test('fails on syntax error', (t) => {
 	t.plan(4)

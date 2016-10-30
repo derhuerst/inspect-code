@@ -6,10 +6,28 @@ const falafel = require('falafel')
 const vm = require('vm')
 const stack = require('stack-trace')
 
-const {
-	unusedIdentifier, isNamedCallExpression, isPrimitiveExpression
-} = require('./helpers')
+const tools = require('./ast-helpers')
 const defaultSandbox = require('./default-sandbox')
+
+
+
+const randomString = (l = 3) => {
+	let id = (Math.random() * 26 + 10 | 0).toString(36)
+	for (let i = 1; i < l; i++)
+		id += (Math.random() * 26 | 0).toString(36)
+	return id
+}
+
+const nameFinder = (identifiers) => {
+	const added = []
+	return () => {
+		let id = '_' + randomString()
+		while (identifiers.includes(id) || added.includes(id))
+			id = '_' + randomString()
+		added.push(id)
+		return id
+	}
+}
 
 
 
