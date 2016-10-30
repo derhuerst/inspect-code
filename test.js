@@ -97,3 +97,16 @@ test('collects timestamps', (t) => {
 			t.ok(rEqual(100, v.when, d[i - 1].when))
 	})
 })
+
+test('inlines `setTimeout`', (t) => {
+	t.plan(2)
+	const d = inspect(`
+		let x = 1;
+		setTimeout(() => {
+			x + 1;
+		})
+	`)
+
+	t.equal(d.length, 1, 'cb of setTimeout not executed')
+	t.equal(d[0].value, 2)
+})
