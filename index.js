@@ -69,11 +69,9 @@ const inspect = (code, sandbox = defaultSandbox) => {
 					tools.assignment(tools.identifier(argNames[i]), arg))
 
 				expressions[i] = {start, end, code: source(n)}
-				const now = tools.call(tools.identifier(nameOfNow), [
-						tools.identifier(fnName),
-						tools.literal(i),
-						argNames.map(tools.identifier)
-				])
+				const now = tools.call(tools.identifier(nameOfNow),
+					[tools.identifier(fnName), tools.literal(i)]
+					.concat(argNames.map(tools.identifier)))
 				deferredCalls.push({fn: fnName, args: argNames})
 				i++
 
@@ -89,6 +87,9 @@ const inspect = (code, sandbox = defaultSandbox) => {
 			else if (n.type === 'Program') {
 				let body = n.body
 
+				if (anchorsToAdd.length > 0)
+					body = [].concat(tools.declaration(anchorsToAdd), body)
+
 				if (deferredCalls.length > 0)
 					body = body.concat({
 						type: 'ExpressionStatement',
@@ -99,9 +100,6 @@ const inspect = (code, sandbox = defaultSandbox) => {
 							})))
 						])
 					})
-
-				if (anchorsToAdd.length > 0)
-					body = [].concat(tools.declaration(anchorsToAdd), body)
 
 				n = Object.assign({}, n, {body})
 			}
