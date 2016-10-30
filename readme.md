@@ -10,6 +10,7 @@
 
 - The code has only access to [things inside the sandbox](lib/sandbox.js).
 - Code that does any stack trace magic will behave differently.
+- All this parsing & instrumenting will make it slower than `vm.runInNewContext` (run the [benchmarks](benchmark.js)).
 - There are unsolved problems like spread operators, `async`/`await`, etc.
 
 [![npm version](https://img.shields.io/npm/v/inspect-code.svg)](https://www.npmjs.com/package/inspect-code)
