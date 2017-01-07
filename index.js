@@ -12,7 +12,7 @@ const defaultSandbox = require('./lib/sandbox')
 
 const inspect = (code, sandbox = defaultSandbox) => {
 	const {
-		ast, expressions, nameOfSpy, nameOfNow, nameOfLater
+		ast, expressions, nameOfSpy
 	} = instrument(code, parse(code, {
 		ecmaVersion: 6, ranges: true, locations: true
 	}))
@@ -31,29 +31,15 @@ const inspect = (code, sandbox = defaultSandbox) => {
 		return value
 	}
 
-	const now = (fn, i, ...args) => {
-		if (fn === setTimeout) return
-		return spy(fn(...args), i)
-	}
-
-	const later = (calls) => {
-		calls
-		.filter((call) => call.fn === setTimeout)
-		.sort((call1, call2) => call1.args[1] - call2.args[1]) // sort by delay
-		.forEach(({args}) => args[0]()) // call callback synchronously
-	}
 
 
-
-	sandbox = Object.assign({}, sandbox, {
-		[nameOfSpy]: spy, [nameOfNow]: now, [nameOfLater]: later,
-		global: sandbox, GLOBAL: sandbox
-	})
+	const ctx = {[nameOfSpy]: spy}
+	Object.assign(ctx, {global: ctx, GLOBAL: ctx}, sandbox)
 	const instrumented = generate(ast)
 
 	try {
 		const script = new vm.Script(instrumented, {filename: 'inspect-code'})
-		script.runInContext(new vm.createContext(sandbox))
+		script.runInContext(new vm.createContext(ctx))
 	} catch (err) {
 		if (!err.loc) {
 			const f = stack.parse(err)
