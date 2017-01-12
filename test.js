@@ -99,14 +99,21 @@ test('collects timestamps', (t) => {
 })
 
 test('inlines `setTimeout`', (t) => {
-	t.plan(2)
+	t.plan(1)
 	const d = inspect(`
-		let x = 1;
+		let x = 1
 		setTimeout(() => {
-			x + 1;
-		})
+			const t = setTimeout(() => {
+				x = 0
+			}, 10)
+			setTimeout(() => {
+				x++
+				x + 0
+			}, 20)
+			clearTimeout(t)
+		}, 10)
 	`)
 
-	t.equal(d.length, 1, 'cb of setTimeout not executed')
-	t.equal(d[0].value, 2)
+	const x = d.find((e) => e.code === 'x + 0')
+	t.equal(x.value, 2, 'setTimeout doesnt work')
 })

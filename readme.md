@@ -4,13 +4,13 @@
 
 ## How it works
 
-*inspect-code* takes a string of code, **instruments it to spy on every expression and [inlines `setTimeout` calls](https://gist.github.com/derhuerst/2a9e08c961b400695b84e983f5b31534#making-asynchronous-js-code-synchronous) to make them run sync** in the end. After running it inside [Node's `vm`](https://nodejs.org/api/vm.html), it returns every expression, with its code and values.
+*inspect-code* takes a string of code, **instruments it to spy on every expression and uses [`lolex`](https://github.com/sinonjs/lolex) to make `setTimeout` & co. run sync** in the end. After running it inside [Node's `vm`](https://nodejs.org/api/vm.html), it returns every expression, with its code and values.
 
 ## Caveats
 
 - The code has only access to [things inside the sandbox](lib/sandbox.js).
 - Code that does any stack trace magic will behave differently.
-- All this parsing & instrumenting will make it slower than `vm.runInNewContext` (run the [benchmarks](benchmark.js)).
+- Parsing & instrumenting will make it slower than `vm.runInNewContext` (run the [benchmarks](benchmark.js)).
 - There are unsolved problems like spread operators, `async`/`await`, etc.
 
 [![npm version](https://img.shields.io/npm/v/inspect-code.svg)](https://www.npmjs.com/package/inspect-code)

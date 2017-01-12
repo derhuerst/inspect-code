@@ -2,6 +2,7 @@
 
 const parse = require('acorn').parse
 const generate = require('escodegen').generate
+const lolex = require('lolex')
 const vm = require('vm')
 const stack = require('stack-trace')
 
@@ -33,13 +34,22 @@ const inspect = (code, sandbox = defaultSandbox) => {
 
 
 
-	const ctx = {[nameOfSpy]: spy}
-	Object.assign(ctx, {global: ctx, GLOBAL: ctx}, sandbox)
+	const ctx = sandbox()
+	ctx[nameOfSpy] = spy
+
+	const clock = lolex.install(ctx, Date.now(), [
+		'setTimeout', 'clearTimeout',
+		'setInterval', 'clearInterval',
+		'setImmediate', 'clearImmediate',
+		'Date'
+	], 100)
+
 	const instrumented = generate(ast)
 
 	try {
 		const script = new vm.Script(instrumented, {filename: 'inspect-code'})
 		script.runInContext(new vm.createContext(ctx))
+		clock.runAll()
 	} catch (err) {
 		if (!err.loc) {
 			const f = stack.parse(err)
