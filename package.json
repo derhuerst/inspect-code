@@ -15,7 +15,7 @@
 	"engines":      {"node": ">=6"},
 	"dependencies": {
 		"javascript-idents": "^1.0.0",
-		"acorn": "^4.0.3",
+		"acorn": "^5.0.0",
 		"escodegen": "^1.8.1",
 		"estraverse": "^4.2",
 		"stack-trace": "^0.0.9",
