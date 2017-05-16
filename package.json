@@ -18,7 +18,7 @@
 		"acorn": "^5.0.0",
 		"escodegen": "^1.8.1",
 		"estraverse": "^4.2",
-		"stack-trace": "^0.0.9",
+		"stack-trace": "^0.0.10",
 		"lolex": "^1.5.2"
 	},
 	"devDependencies": {
