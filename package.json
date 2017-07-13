@@ -19,7 +19,7 @@
 		"escodegen": "^1.8.1",
 		"estraverse": "^4.2",
 		"stack-trace": "^0.0.10",
-		"lolex": "^1.5.2"
+		"lolex": "^2.0.0"
 	},
 	"devDependencies": {
 		"tape": "^4.6",
