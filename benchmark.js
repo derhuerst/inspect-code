@@ -4,16 +4,14 @@
 const Benchmark = require('benchmark')
 const vm = require('vm')
 
-const inspect = require('./index')
+const inspect = require('.')
 const sandbox = require('./lib/sandbox')
 
 new Benchmark.Suite()
 
-
-
 .add('vanilla vm.runInNewContext', () => {
 
-	new vm.runInNewContext(`
+	vm.runInNewContext(`
 		const a = x => x - 1
 		const b = [1, 2, 3]
 		const c = b[a(b.length)]
@@ -40,7 +38,5 @@ new Benchmark.Suite()
 	`)
 })
 
-
-
-.on('cycle', (e) => console.log(e.target.toString()))
+.on('cycle', (e) => console.log('' + e.target))
 .run({async: true})

@@ -1,8 +1,6 @@
 'use strict'
 
-const inspect = require('./index')
-
-
+const inspect = require('.')
 
 const code = `\
 const a = x => x - 1

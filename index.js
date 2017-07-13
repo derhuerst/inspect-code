@@ -48,7 +48,7 @@ const inspect = (code, sandbox = defaultSandbox) => {
 
 	try {
 		const script = new vm.Script(instrumented, {filename: 'inspect-code'})
-		script.runInContext(new vm.createContext(ctx))
+		script.runInContext(vm.createContext(ctx))
 		clock.runAll()
 	} catch (err) {
 		if (!err.loc) {
