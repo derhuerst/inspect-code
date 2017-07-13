@@ -4,7 +4,9 @@
 
 ## How it works
 
-*inspect-code* takes a string of code, **instruments it to spy on every expression and uses [`lolex`](https://github.com/sinonjs/lolex) to make `setTimeout` & co. run sync** in the end. After running it inside [Node's `vm`](https://nodejs.org/api/vm.html), it returns every expression, with its code and values.
+*inspect-code* takes a string of code, **instruments it to spy on every expression and uses [`lolex`](https://github.com/sinonjs/lolex) to make `setTimeout` & co. run sync** in the end. After running it inside [Node's `vm`](https://nodejs.org/api/vm.html), it returns every expression, with its code and values. This is similar to what JS code coverage tools do.
+
+Note that, because this module executes the code instead of doing [static analysis](https://en.wikipedia.org/wiki/Static_program_analysis), it is limited by runtime limitations such as runtime errors.
 
 ## Caveats
 
@@ -18,6 +20,7 @@
 [![dependency status](https://img.shields.io/david/derhuerst/inspect-code.svg)](https://david-dm.org/derhuerst/inspect-code)
 [![dev dependency status](https://img.shields.io/david/dev/derhuerst/inspect-code.svg)](https://david-dm.org/derhuerst/inspect-code#info=devDependencies)
 ![ISC-licensed](https://img.shields.io/github/license/derhuerst/inspect-code.svg)
+[![chat on gitter](https://badges.gitter.im/derhuerst.svg)](https://gitter.im/derhuerst)
 
 
 ## Installing

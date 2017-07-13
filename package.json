@@ -14,18 +14,18 @@
 	"license":      "ISC",
 	"engines":      {"node": ">=6"},
 	"dependencies": {
-		"javascript-idents": "^1.0.0",
-		"acorn": "^5.0.0",
+		"acorn": "^5.1.1",
 		"escodegen": "^1.8.1",
 		"estraverse": "^4.2",
-		"stack-trace": "^0.0.10",
-		"lolex": "^1.5.2"
+		"javascript-idents": "^1.0.0",
+		"lolex": "^1.5.2",
+		"stack-trace": "0.0.10"
 	},
 	"devDependencies": {
-		"tape": "^4.6",
-		"tap-min": "^1.1",
+		"benchmark": "^2.1.4",
 		"is-roughly-equal": "^0.1",
-		"benchmark": "^2.1.1"
+		"tap-min": "^1.2.1",
+		"tape": "^4.7.0"
 	},
 	"scripts": {
 		"test": "node test.js | tap-min",
