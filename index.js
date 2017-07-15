@@ -37,12 +37,17 @@ const inspect = (code, sandbox = defaultSandbox) => {
 	const ctx = sandbox()
 	ctx[nameOfSpy] = spy
 
-	const clock = lolex.install(ctx, Date.now(), [
-		'setTimeout', 'clearTimeout',
-		'setInterval', 'clearInterval',
-		'setImmediate', 'clearImmediate',
-		'Date'
-	], 100)
+	const clock = lolex.install({
+		target: ctx,
+		now: Date.now(),
+		toFake: [
+			'setTimeout', 'clearTimeout',
+			'setInterval', 'clearInterval',
+			'setImmediate', 'clearImmediate',
+			'Date'
+		],
+		loopLimit: 100
+	})
 
 	const instrumented = generate(ast)
 

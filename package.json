@@ -1,7 +1,7 @@
 {
 	"name":         "inspect-code",
 	"description":  "Run code and get the value of every expression.",
-	"version":      "0.1.0",
+	"version":      "1.0.0",
 	"main":         "index.js",
 	"files":        ["index.js", "lib/*.js"],
 	"keywords":     [
@@ -18,7 +18,7 @@
 		"escodegen": "^1.8.1",
 		"estraverse": "^4.2",
 		"javascript-idents": "^1.0.0",
-		"lolex": "^1.5.2",
+		"lolex": "^2.0.0",
 		"stack-trace": "0.0.10"
 	},
 	"devDependencies": {
