@@ -24,7 +24,7 @@
 	"devDependencies": {
 		"benchmark": "^2.1.4",
 		"is-roughly-equal": "^0.1",
-		"tap-min": "^1.2.1",
+		"tap-min": "^2.0.0",
 		"tape": "^4.7.0"
 	},
 	"scripts": {
