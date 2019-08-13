@@ -14,7 +14,7 @@
 	"license":      "ISC",
 	"engines":      {"node": ">=6"},
 	"dependencies": {
-		"acorn": "^6.0.0",
+		"acorn": "^7.0.0",
 		"escodegen": "^1.8.1",
 		"estraverse": "^4.2",
 		"javascript-idents": "^1.0.0",
