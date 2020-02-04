@@ -18,7 +18,7 @@
 		"escodegen": "^1.8.1",
 		"estraverse": "^4.2",
 		"javascript-idents": "^1.0.0",
-		"lolex": "^4.0.1",
+		"lolex": "^6.0.0",
 		"stack-trace": "0.0.10"
 	},
 	"devDependencies": {
