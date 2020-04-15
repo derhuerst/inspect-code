@@ -16,7 +16,7 @@
 	"dependencies": {
 		"acorn": "^7.0.0",
 		"escodegen": "^1.8.1",
-		"estraverse": "^4.2",
+		"estraverse": "^5.1.0",
 		"javascript-idents": "^1.0.0",
 		"lolex": "^4.0.1",
 		"stack-trace": "0.0.10"
