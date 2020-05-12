@@ -1,35 +1,49 @@
 {
-	"name":         "inspect-code",
-	"description":  "Run code and get the value of every expression.",
-	"version":      "1.0.0",
-	"main":         "index.js",
-	"files":        ["index.js", "lib/*.js"],
-	"keywords":     [
-		"debug", "debugger", "inspector", "instrument", "codecov",
-		"expression", "values", "dynamic analysis"
-	],
-	"author":       "Jannis R <mail@jannisr.de>",
-	"homepage":     "https://github.com/derhuerst/inspect-code",
-	"repository":   "derhuerst/inspect-code",
-	"license":      "ISC",
-	"engines":      {"node": ">=6"},
-	"dependencies": {
-		"acorn": "^7.0.0",
-		"escodegen": "^1.8.1",
-		"estraverse": "^4.2",
-		"javascript-idents": "^1.0.0",
-		"lolex": "^4.0.1",
-		"stack-trace": "0.0.10"
-	},
-	"devDependencies": {
-		"benchmark": "^2.1.4",
-		"is-roughly-equal": "^0.1",
-		"tap-min": "^1.2.1",
-		"tape": "^5.0.0"
-	},
-	"scripts": {
-		"test": "node test.js | tap-min",
-		"prepublish": "npm test",
-		"benchmark": "node benchmark.js"
-	}
+  "name": "inspect-code",
+  "description": "Run code and get the value of every expression.",
+  "version": "1.0.0",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "lib/*.js"
+  ],
+  "keywords": [
+    "debug",
+    "debugger",
+    "inspector",
+    "instrument",
+    "codecov",
+    "expression",
+    "values",
+    "dynamic analysis"
+  ],
+  "author": "Jannis R <mail@jannisr.de>",
+  "homepage": "https://github.com/derhuerst/inspect-code",
+  "repository": "derhuerst/inspect-code",
+  "license": "ISC",
+  "engines": {
+    "node": ">=6"
+  },
+  "dependencies": {
+    "acorn": "^7.0.0",
+    "escodegen": "^1.8.1",
+    "estraverse": "^4.2",
+    "javascript-idents": "^1.0.0",
+    "lolex": "^4.0.1",
+    "stack-trace": "0.0.10",
+    "snyk": "^1.320.2"
+  },
+  "devDependencies": {
+    "benchmark": "^2.1.4",
+    "is-roughly-equal": "^0.1",
+    "tap-min": "^1.2.1",
+    "tape": "^5.0.0"
+  },
+  "scripts": {
+    "test": "node test.js | tap-min",
+    "prepublish": "npm run snyk-protect && npm test",
+    "benchmark": "node benchmark.js",
+    "snyk-protect": "snyk protect"
+  },
+  "snyk": true
 }
